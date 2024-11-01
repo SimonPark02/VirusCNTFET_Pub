@@ -1,0 +1,85 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Virtual environment
+venv/
+env/
+.venv/
+.env/
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# PyInstaller
+# Usually contains a lot of files, can be massive
+*.manifest
+*.spec
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+pytestdebug.log
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# macOS system files
+.DS_Store
+
+# PyCharm
+.idea/
+
+# VSCode
+.vscode/
+
+# MyPy
+.mypy_cache/
+.dmypy.json
+.pyre/
+
+# Environments and tools
+.pyenv/
+pip-wheel-metadata/
+*.env
+.envrc
+venv.bak/
+node_modules/
+
+# Log files
+*.log
+*.txt
+
+# Temporary and backup files
+*.bak
+*.swp
+*.swo
+*.tmp
