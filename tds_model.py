@@ -4,7 +4,7 @@ from typing import Callable
 from scipy.integrate import solve_ivp
 
 from parameters import *
-from curves import m_inf
+from curves import m_inf, dep, ddep, tri, dtri
 
 
 METHOD = 'LSODA'
@@ -103,3 +103,92 @@ class VoltageResponse:
         ax.set_ylabel('V(mV)', fontsize=10)
 
         plt.show()
+
+
+def create_step_voltage(
+    v_step: float,
+    v_sd: float,
+    t_polarization: float,
+    polarization_delay: float
+) -> tuple[Callable, Callable, Callable]:
+    """Creates voltage functions for step voltage
+
+    Parameters
+    ----------
+    v_step : float
+        Step of the liquid-gate voltage. Liquid-gate voltage is initially 0mV and changed to the value provided by v_step.
+    v_sd : float
+        Source-drain voltage. Turned on at the same timestamp with the liquid-gate voltage.
+    t_polarization : float
+        The timestamp when v_step is reached.
+    polorization_delay : float
+        Time span for the voltage step to be made. The voltage will start to change at (t_polarization - polarization_delay) and reach v_step at t_polarization.
+
+    Returns
+    -------
+    Vlg : Callable
+        Liquid-gate voltage as a function of time.
+    dVlgdt : Callable
+        Time-derivative of the liquid-gate voltage.
+    dVsdt : Callable
+        Time-derivative of the source-drain voltage.
+    """
+    def Vlg(t):
+        return v_step * dep(polarization_delay, t - (t_polarization - polarization_delay))
+
+    def dVlgdt(t):
+        return v_step * ddep(polarization_delay, t - (t_polarization - polarization_delay))
+
+    def dVsdt(t):
+        return v_sd * ddep(polarization_delay, t - (t_polarization - polarization_delay))
+
+    return Vlg, dVlgdt, dVsdt
+
+
+def create_voltage_sweep(
+    v_low: float,
+    v_high: float,
+    slope: float,
+    v_sd: float,
+    t_polarization: float,
+    polarization_delay: float
+) -> tuple[Callable, Callable, Callable]:
+    """Creates voltage functions for cyclic voltametry
+
+    Parameters
+    ----------
+    v_low : float
+        Lowest voltage in the linear sweep. The liquid-gate voltage is initially 0mV and reaches v_low at t_polarization.
+    v_high : float
+        Highest voltage in the linear sweep.
+    slope : float
+        Slope of the sweep.
+    v_sd : float
+        Source-drain voltage. Turned on at the same timestamp with the liquid-gate voltage.
+    t_polarization : float
+        The timestamp when v_low is reached.
+    polorization_delay : float
+        Time span for the polarization to be made. The voltage will start to change at (t_polarization - polarization_delay) and reach v_low at t_polarization.
+
+    Returns
+    -------
+    Vlg : Callable
+        Liquid-gate voltage as a function of time.
+    dVlgdt : Callable
+        Time-derivative of the liquid-gate voltage.
+    dVsdt : Callable
+        Time-derivative of the source-drain voltage.
+    """
+    _height = v_high - v_low
+    _width = _height / slope
+
+    def Vlg(t):
+        return v_low * dep(polarization_delay, t - (t_polarization - polarization_delay)) + _height * tri(_width, t - _width - t_polarization)
+
+    def dVlgdt(t):
+        return v_low * ddep(polarization_delay, t - (t_polarization - polarization_delay)) + _height * dtri(_width, t - _width - t_polarization)
+
+    def dVsdt(t):
+        return v_sd * ddep(polarization_delay, t - (t_polarization - polarization_delay))
+
+    return Vlg, dVlgdt, dVsdt

@@ -1,13 +1,13 @@
 """
-Dimesion                 Unit
+Dimension                Unit
 --------------------     --------
-area                     cm^2
-volume                   cm^3
-electric potential       mV
-time                     ms
-specific conductance     mS/cm^2
-specific capacitance     uF/cm^2
-ion concentration        mM
+Area                     cm^2
+Volume                   cm^3
+Electric potential       mV
+Time                     ms
+Specific conductance     mS/cm^2
+Specific capacitance     uF/cm^2
+Ion concentration        mM
 """
 
 from scipy.constants import pi
